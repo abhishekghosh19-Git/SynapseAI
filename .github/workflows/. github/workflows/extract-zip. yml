@@ -1,0 +1,32 @@
+name: Extract ZIP File
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '*.zip'
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Extract ZIP files
+        run: |
+          for zip_file in *.zip; do
+            if [ -f "$zip_file" ]; then
+              unzip -q "$zip_file"
+              rm "$zip_file"
+            fi
+          done
+      
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Extract ZIP contents" || echo "No changes to commit"
+          git push
